@@ -1,0 +1,20 @@
+# source aliases
+[ -f "$HOME/.config/shell/aliasrc" ] && source "$HOME/.config/shell/aliasrc"
+
+# source defaults
+[ -f "$HOME/.config/shell/defaults" ] && source "$HOME/.config/shell/defaults"
+
+# source functions
+[ -f "$HOME/.config/shell/functions" ] && source "$HOME/.config/shell/functions"
+
+# source fzf functions
+[ -f "$HOME/.config/shell/fzfrc" ] && source "$HOME/.config/shell/fzfrc"
+
+# source ZSH settings
+[ -f "$HOME/.config/zsh/settings.zsh" ] && source "$HOME/.config/zsh/settings.zsh"
+
+# source ZSH key bindings
+[ -f "$HOME/.config/zsh/keybindings.zsh" ] && source "$HOME/.config/zsh/keybindings.zsh"
+
+# local customizations (~/.zshrc_local)
+[ -f "$HOME/.zshrc_local" ] && source  "$HOME/.zshrc_local"
