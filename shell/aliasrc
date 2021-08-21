@@ -1,0 +1,100 @@
+#!/bin/sh
+# aliasrc - aliases for my shell
+
+# -------- overwriting std cmds --------
+command -v bat > /dev/null 2>&1 && alias cat='bat'
+alias \
+    cp='cp -irv' \
+    grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
+    md='mkdir -p' \
+    mv='mv -iv' \
+    rm='rm -Iv'
+
+
+# ------------- exa as ls --------------
+command -v exa > /dev/null 2>&1 && alias \
+    ls='exa --group-directories-first -x' \
+    l='ls -laF' \
+    li='l --icons' \
+    ll='ls -laF --git' \
+    lo='ls -1' \
+    lt='ls --tree --level=2' \
+    lx='ls -la --sort=Extension'
+
+
+# ----------------- git ----------------
+alias \
+    ga='git add' \
+    gad='git add .' \
+    gap='git add -p' \
+    gau='git add -u' \
+    gb='git branch --all' \
+    gcm='git commit -vS' \
+    gcam='git commit -vS --amend' \
+    gco='git checkout' \
+    gcom='git checkout master || git checkout main' \
+    gd='git diff' \
+    gdc='git diff --cached' \
+    gdw='git diff --color-words' \
+    gdcw='git diff --cached --color-words' \
+    gl='git log --color --graph --decorate' \
+    glo='git log --color --graph --decorate --oneline' \
+    gs='git status -sb' \
+    gst='git status -sb'
+
+
+# ---------------- dev -----------------
+alias \
+    a='./a.out' \
+    err='echo $?' \
+    gpp='g++'
+
+
+# ---------------- tmux ----------------
+alias \
+    mx='tmux -u new-session -s "levinova" 2> /dev/null \; split-window -h \; select-pane -L \; || tmux a -t "levinova"' \
+    tat='tmux a -t' \
+    tls='tmux ls' \
+    tns='tmux new -s'
+
+
+# ----------- NetworkManager -----------
+alias \
+    nmcon='nmcli device wifi connect' \
+    nmls='nmcli device wifi list' \
+    nmst='nmcli device status'
+
+
+# ------------- youtube-dl -------------
+alias \
+    ytdl='youtube-dl' \
+    ytad="ytdl --extract-audio --audio-format best --write-description --add-metadata --embed-thumbnail --write-info-json"
+
+
+# --------------- other ----------------
+alias \
+    :q='exit' \
+    :x='exit' \
+    cb='xclip -r -selection c' \
+    clock='watch -t -n 1 "date +%H:%M:%S"' \
+    colr='for i in {0..255}; do print -Pn "%K{$i} %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%8)):#7}:+"\n"}; done' \
+    open='xdg-open 2> /dev/null' \
+    ssd='systemctl suspend && exit'
+
+
+# ---------------- dir -----------------
+alias \
+    ...=../.. \
+    ....=../../.. \
+    .....=../../../.. \
+    ......=../../../../.. \
+    1='cd -' \
+    2='cd -2' \
+    3='cd -3' \
+    4='cd -4' \
+    5='cd -5' \
+    6='cd -6' \
+    7='cd -7' \
+    8='cd -8' \
+    9='cd -9' \
+    up='cd ..'
