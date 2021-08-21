@@ -1,0 +1,91 @@
+#!/bin/sh
+# functions - some usefull functions
+
+# ----------- extr -----------
+# usage: extr <file>
+# description: archive extractor
+extr () {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2|*.tbz2)   tar xjf         "$1";;
+            *.tar.gz|*.tgz)     tar xzf         "$1";;
+            *.tar.zst)          tar -I zstd xf  "$1";;
+            *.tar.xz)           tar xf          "$1";;
+            *.tar)              tar xf          "$1";;
+            *.gz)               gunzip          "$1";;
+            *.xz)               unxz            "$1";;
+            *.rar)              unrar x         "$1";;
+            *.zip)              unzip           "$1";;
+            *.7z)               7z x            "$1";;
+            *.Z)                uncompress      "$1";;
+            *.bz2)              bunzip2         "$1";;
+            *.lzma)             unlzma          "$1";;
+            *)                  echo "'$1' cannot be extracted via extr()"; return 1;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+        return 2
+    fi
+}
+
+# ----------- guntar -----------
+# description: tar untracked git files
+guntar() {
+    if [[ -d "./.git" ]]; then
+        local tarname="$(git rev-parse --show-toplevel | rev | cut -d'/' -f1 | rev)_$(date +%d-%m-%y_%H-%M-%S).tar.gz"
+        local savedir="$HOME/.cache"
+        # local savedir="${PWD}" # to save tarball in current (git) directory
+        local untrfiles=$(git ls-files --others --exclude-standard)
+        echo "$untrfiles" | xargs tar cvzf "$savedir/$tarname" && echo "'$tarname' saved in '$savedir'"
+    else
+        echo "'${PWD}' is not a git repository"
+    fi
+}
+
+# ----------- gmotar -----------
+# description: tar (un)staged modified git files
+gmotar() {
+    if [[ -d "./.git" ]]; then
+        local tarname="$(git rev-parse --show-toplevel | rev | cut -d'/' -f1 | rev)_$(date +%d-%m-%y_%H-%M-%S).tar.gz"
+        local savedir="$HOME/.cache"
+        # local savedir="${PWD}" # to save tarball in current (git) directory
+        local modfiles=$(git diff --name-only; git diff --name-only --staged | uniq)
+        echo "$modfiles" | xargs tar cvzf "$savedir/$tarname" && echo "'$tarname' saved in '$savedir'"
+    else
+        echo "'${PWD}' is not a git repository"
+    fi
+}
+
+# ------------ mcd -----------
+# description: create and change directory
+mcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# ----------- path -----------
+# description: print, remove, append or prepend to $PATH
+path_print() {
+    echo $PATH | sed "s/:/\\n/g"
+}
+
+path_remove() {
+    PATH=$(echo -n "$PATH" | awk -v RS=: -v ORS=: "\$0 != \"$1\"" | sed 's/:$//')
+}
+
+path_append() {
+    path_remove "$1"
+    PATH="${PATH:+"$PATH:"}$1"
+}
+
+path_prepend() {
+    path_remove "$1"
+    PATH="$1${PATH:+":$PATH"}"
+}
+
+# ----------- xp -----------
+# description: return class, instance, & title of a window with xprop
+xp() {
+    xprop | awk '
+    /^WM_CLASS/{sub(/.* =/, "instance:"); sub(/,/, "\nclass:   "); print}
+    /^WM_NAME/{sub(/.* =/, "title:   "); print}'
+}
