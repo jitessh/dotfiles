@@ -1,0 +1,114 @@
+#!/bin/sh
+# fzfrc - all hail fzf
+
+alias btrfzf="fzf -0 --border=rounded --height=45% --info=inline"
+
+# ----------- cf -----------
+# description: cd to a dir from $HOME
+cf() {
+    local var
+    if command -v fd >/dev/null; then
+        var=$(fd -d5 -td --follow --search-path ~ | btrfzf --prompt='cd ')
+    else
+        var=$(find -L $HOME -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt='cd ')
+    fi
+    if [[ -n "$var" ]]; then
+        cd $var
+    fi
+}
+
+# ----------- ccd -----------
+# description: cd from current dir
+ccd() {
+    local var
+    if command -v fd >/dev/null; then
+        var=$(fd -d5 -td --follow | btrfzf --prompt='cd ')
+    else
+        var=$(find -L . -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt='cd ')
+    fi
+    if [[ -n "$var" ]]; then
+        cd $var
+    fi
+}
+
+# ----------- vif -----------
+# description: open a file in $EDITOR
+vif() {
+    local var
+    var=$(btrfzf --prompt='open ')
+    if [[ -n "$var" ]]; then
+        $EDITOR "$var"
+    fi
+}
+
+# ----------- pdf -----------
+# description: open pdf/epub in zathura
+if command -v zathura >/dev/null; then
+    pdf() {
+        local var
+        if command -v fd >/dev/null; then
+            var=$(fd -e pdf -e epub)
+        else
+            var=$(find . -type f -name "*.pdf" -o -name "*.epub")
+        fi
+        echo $var | btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt='zathura ' >/dev/null
+    }
+fi
+
+# ----------- xopen -----------
+# description: open any file with xdg-open
+xopen() {
+    btrfzf --bind "enter:execute|xdg-open {} 2>/dev/null &|,enter:+print-query" --prompt='xdg-open ' >/dev/null
+}
+
+# ----------- hst -----------
+# description: search command line history & copy selected
+hst() {
+    local var
+    var=$(history | cut -c8- | btrfzf --multi --tac --prompt='history ')
+    if [[ -n "$var" ]]; then
+        echo $var | xclip -r -selection c
+    fi
+}
+
+if [[ -f "/etc/arch-release" ]]; then
+    # ----------- pacls -----------
+    # description: list all installed packages
+    pacls() {
+        local var
+        var=$(pacman -Qq  | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt='pkg ')
+        if [[ -n "$var" ]]; then
+            echo $var | xclip -r -selection c
+        fi
+    }
+
+    # ----------- pacfd -----------
+    # description: find a package
+    pacfd() {
+        local var
+        var=$(pacman -Slq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt='pkg ')
+        if [[ -n "$var" ]]; then
+            echo $var | xclip -r -selection c
+        fi
+    }
+
+    # ----------- aurls -----------
+    # description: list all installed AUR packages
+    aurls() {
+        local var
+        var=$(yay -Qmq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt='pkg ')
+        if [[ -n "$var" ]]; then
+            echo $var | xclip -r -selection c
+        fi
+    }
+
+    # ----------- aurfd -----------
+    # description: find an AUR package
+    aurfd() {
+        local var
+        var=$(yay -Slaq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt='pkg ')
+        if [[ -n "$var" ]]; then
+            echo $var | xclip -r -selection c
+        fi
+    }
+fi
