@@ -1,0 +1,8 @@
+#!/bin/sh
+# defaults - some shell defaults
+
+# preferred editor for local and remote sessions
+[ -n "$SSH_CONNECTION" ] && export EDITOR="vim" || export EDITOR="vim"
+
+# preferred pager
+command -v bat > /dev/null 2>&1 && export MANPAGER="sh -c 'col -bx | bat -l man -p'"
