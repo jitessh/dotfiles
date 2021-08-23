@@ -8,6 +8,9 @@ zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/settings.zsh"
 # source ZSH key bindings
 zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/keybindings.zsh"
 
+# source ZSH prompt
+zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/prompt.zsh"
+
 # source aliases
 zsh_source_file "$HOME/.config/shell/aliasrc"
 
