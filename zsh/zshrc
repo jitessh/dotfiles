@@ -1,5 +1,6 @@
 zsh_source_file() {
     [ -f "$1" ] && source "$1"
+    return 0 # avoid non-zero return codes when file does not exists
 }
 
 # source ZSH settings

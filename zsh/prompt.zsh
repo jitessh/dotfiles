@@ -38,8 +38,8 @@ if [[ "$(tput colors)" == "256" ]]; then
 
     # change default colors
     fg[red]=$FG[160]
-    fg[green]=$FG[064]
-    fg[yellow]=$FG[136]
+    fg[green]=$FG[040]
+    fg[yellow]=$FG[214]
     fg[blue]=$FG[033]
     fg[magenta]=$FG[125]
     fg[cyan]=$FG[037]
