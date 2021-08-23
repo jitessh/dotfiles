@@ -3,15 +3,20 @@
 # RPR_SHOW_USER=(true, false)   - show username in rhs prompt
 # RPR_SHOW_HOST=(true, false)   - show host in rhs prompt
 # RPR_SHOW_GIT=(true, false)    - show git status in rhs prompt
-# PR_EXTRA="[stuff]"            - extra content to add to prompt
-# RPR_EXTRA="[stuff]"           - extra content to add to rhs prompt
-# Copied from https://github.com/anishathalye/dotfiles/blob/master/zsh/prompt.zsh
+# PR_EXTRA() {stuff}            - extra content to add to prompt
+# RPR_EXTRA() {stuff}           - extra content to add to rhs prompt
 
 # Allow for variable/function substitution in prompt
 setopt prompt_subst
 
 # Load color variables to make it easier to color things
 autoload -U colors && colors
+
+# Customizable options
+PR_ARROW_CHAR="->"
+RPR_SHOW_GIT=true
+RPR_SHOW_HOST=true
+RPR_SHOW_USER=true
 
 # Make using 256 colors easier
 if [[ "$(tput colors)" == "256" ]]; then
@@ -37,12 +42,12 @@ else
     fg[pink]=$fg[magenta]
 fi
 
-# Current directory, truncated to 3 path elements (or 4 when one of them is "~")
-# The number of elements to keep can be specified as sub=value
+# Current directory, truncated to 2 path elements (or 3 when one of them is "~")
+# The number of elements to keep can be specified as ${1}
 function PR_DIR() {
-    local sub=2
+    local sub=${1}
     if [[ "${sub}" == "" ]]; then
-        sub=3
+        sub=2
     fi
     local len="$(expr ${sub} + 1)"
     local full="$(print -P "%d")"
@@ -77,9 +82,6 @@ function PR_ERROR() {
     echo "%(?..%(!.%{$fg[violet]%}.%{$fg[red]%})%B!%b%{$reset_color%} )"
 }
 
-# The arrow symbol that is used in the prompt
-PR_ARROW_CHAR="->"
-
 # The arrow in red (for root) or teal (for regular user)
 function PR_ARROW() {
     echo "%(!.%{$fg[red]%}.%{$fg[teal]%})%B${PR_ARROW_CHAR}%b%{$reset_color%}"
@@ -87,7 +89,6 @@ function PR_ARROW() {
 
 # Set custom rhs prompt
 # User in red (for root) or pink (for regular user)
-RPR_SHOW_USER=true # Set to false to disable user in rhs prompt
 function RPR_USER() {
     if [[ "${RPR_SHOW_USER}" == "true" ]]; then
         echo "%(!.%{$fg[red]%}.%{$fg[pink]%})%B%n%b%{$reset_color%}"
@@ -95,7 +96,6 @@ function RPR_USER() {
 }
 
 # Host in pink
-RPR_SHOW_HOST=true # Set to false to disable host in rhs prompt
 function RPR_HOST() {
     if [[ "${RPR_SHOW_HOST}" == "true" ]]; then
         echo "%{$fg[pink]%}%B%m%b%{$reset_color%}"
@@ -125,7 +125,7 @@ GIT_PROMPT_MERGING="%{$fg[cyan]%}%Bx%b%{$reset_color%}"
 GIT_PROMPT_UNTRACKED="%{$fg[red]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_MODIFIED="%{$fg[yellow]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_STAGED="%{$fg[green]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
-GIT_PROMPT_DETACHED="%{$fg[neon]%}%B!%b%{$reset_color%}"
+GIT_PROMPT_DETACHED="%{$fg[neon]%}%B@%b%{$reset_color%}"
 
 # Show Git branch/tag, or name-rev if on detached head
 function parse_git_branch() {
@@ -157,7 +157,7 @@ function parse_git_state() {
     fi
 
     local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-    if [ -n $GIT_DIR ] && test -r $GIT_DIR/MERGE_HEAD; then
+    if [[ -n $GIT_DIR ]] && test -r $GIT_DIR/MERGE_HEAD; then
         if [[ -n $GIT_STATE ]]; then
             GIT_STATE="$GIT_STATE "
         fi
@@ -187,12 +187,12 @@ function parse_git_state() {
 }
 
 # If inside a Git repository, print its branch and state
-RPR_SHOW_GIT=true # Set to false to disable git status in rhs prompt
 function git_prompt_string() {
     if [[ "${RPR_SHOW_GIT}" == "true" ]]; then
         local git_where="$(parse_git_branch)"
         local git_detached="$(parse_git_detached)"
-        [ -n "$git_where" ] && echo " $GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$git_detached$GIT_PROMPT_SUFFIX"
+        [ -n "$git_where" ] && \
+            echo " $GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$GIT_PROMPT_SUFFIX"
     fi
 }
 
