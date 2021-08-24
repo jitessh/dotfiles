@@ -12,6 +12,9 @@ zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/keybindings.zsh"
 # source ZSH prompt
 zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/prompt.zsh"
 
+# source ZSH plugin manager
+zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/plugins.zsh"
+
 # source aliases
 zsh_source_file "$HOME/.config/shell/aliasrc"
 
@@ -23,6 +26,10 @@ zsh_source_file "$HOME/.config/shell/functions"
 
 # source fzf functions
 zsh_source_file "$HOME/.config/shell/fzfrc"
+
+# add plugins
+zsh_add_plugin "zsh-users/zsh-autosuggestions"
+zsh_add_plugin "zdharma/fast-syntax-highlighting"
 
 # local customizations
 zsh_source_file "${ZDOTDIR:-$HOME/.config/zsh}/zshrc_local"
