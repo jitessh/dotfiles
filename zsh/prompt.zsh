@@ -18,6 +18,16 @@ RPR_SHOW_GIT=true
 RPR_SHOW_HOST=true
 RPR_SHOW_USER=true
 
+# Different preset prompts
+# Define your own prompts in PCMD() & RCMD()
+PROMPT_MODE=0
+PROMPT_MODES=4
+
+# Show select exported environment variables
+# eg: _pr_var_list=("EDITOR" "TERMINAL")
+_pr_var_list=()
+_vars_multiline=false
+
 # Make using 256 colors easier
 if [[ "$(tput colors)" == "256" ]]; then
     typeset -Ag FX FG BG
@@ -207,12 +217,9 @@ function git_prompt_string() {
         local git_where="$(parse_git_branch)"
         local git_detached="$(parse_git_detached)"
         [ -n "$git_where" ] && \
-            echo " $GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$GIT_PROMPT_SUFFIX"
+            echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$GIT_PROMPT_SUFFIX"
     fi
 }
-
-PROMPT_MODE=0
-PROMPT_MODES=4
 
 # Function to toggle between prompt modes
 function tog() {
@@ -222,11 +229,6 @@ function tog() {
 function PR_EXTRA() {
     # do nothing by default
 }
-
-# Show select exported environment variables
-
-_pr_var_list=()
-_vars_multiline=false
 
 function vshow() {
     local v
@@ -300,9 +302,9 @@ function PCMD() {
             echo "$(PR_EXTRA)$(PR_DIR)$(PR_VARS) $(PR_ERROR)$(PR_ARROW) " # space at the end
         fi
     elif (( PROMPT_MODE == 1 )); then
-        echo "$(PR_EXTRA)$(PR_DIR 1) $(PR_ERROR)$(PR_ARROW) " # space at the end
+        echo "$(PR_DIR 1) $(PR_ERROR)$(PR_ARROW) " # space at the end
     else
-        echo "$(PR_EXTRA)$(PR_ERROR)$(PR_ARROW) " # space at the end
+        echo "$(PR_DIR 2) $(PR_ERROR)$(PR_ARROW) " # space at the end
     fi
 }
 
@@ -317,8 +319,8 @@ function RPR_EXTRA() {
 function RCMD() {
     if (( PROMPT_MODE == 0 )); then
         echo "$(RPR_EXTRA)$(git_prompt_string) $(RPR_INFO)"
-    elif (( PROMPT_MODE <= 2 )); then
-        echo "$(git_prompt_string)$(RPR_EXTRA)"
+    elif (( PROMPT_MODE == 1 )); then
+        echo "$(git_prompt_string)"
     else
         echo "$(RPR_EXTRA)"
     fi
