@@ -1,6 +1,6 @@
 # initialize completions
 autoload -Uz compinit && compinit -i
-zstyle ':completion:*' menu select=4
+zstyle ':completion:*' menu select
 zmodload zsh/complist
 
 # tab complete hidden files
@@ -10,10 +10,16 @@ _comp_options+=(globdots)
 export HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh_history"
 export HISTSIZE=1000000000
 export SAVEHIST=$HISTSIZE
-setopt EXTENDED_HISTORY
-setopt HIST_IGNORE_SPACE
-setopt HIST_SAVE_NO_DUPS
-setopt HIST_IGNORE_ALL_DUPS
+setopt extendedhistory histignorespace histsavenodups histignorealldups
+
+# better completion
+setopt alwaystoend completeinword
+
+# better cd
+setopt autocd autopushd pushdignoredups pushdminus
+
+# other useful options (see man zshoptions)
+setopt interactivecomments
 
 # disable ^S to freeze terminal
 stty stop undef
