@@ -70,11 +70,10 @@ fi
 # Current directory, truncated to 2 path elements (or 3 when one of them is "~")
 # The number of elements to keep can be specified as ${1}
 function PR_DIR() {
-    local sub=${1}
-    if [[ "${sub}" == "" ]]; then
-        sub=2
-    fi
-    local len="$(expr ${sub} + 1)"
+    local sub="${1}"
+    [[ -z "${sub}" ]] && sub=2
+
+    local len="$(( ${sub} + 1 ))"
     local full="$(print -P "%d")"
     local relfull="$(print -P "%~")"
     local shorter="$(print -P "%${len}~")"
@@ -82,22 +81,15 @@ function PR_DIR() {
     local last="$(print -P "%1~")"
 
     # Longer path for '~/...'
-    if [[ "${shorter}" == \~/* ]]; then
-        current=${shorter}
-    fi
+    [[ "${shorter}" == \~/* ]] && current="${shorter}"
 
-    local truncated="$(echo "${current%/*}/")"
+    local truncated="${current%/*}/"
 
     # Handle special case of directory '/' or '~something'
-    if [[ "${truncated}" == "/" || "${relfull[1,-2]}" != */* ]]; then
-        truncated=""
-    fi
+    [[ "${truncated}" == "/" || "${relfull[1,-2]}" != */* ]] && truncated=""
 
     # Handle special case of last being '/...' one directory down
-    if [[ "${full[2,-1]}" != "" && "${full[2,-1]}" != */* ]]; then
-        truncated="/"
-        last=${last[2,-1]} # take substring
-    fi
+    [[ "${full[2,-1]}" != "" && "${full[2,-1]}" != */* ]] && { truncated="/"; last="${last[2,-1]}"; }
 
     echo "%{$fg[cyan]%}%B${truncated}%b%{$fg[blue]%}%B${last}%b%{$reset_color%}"
 }
@@ -129,7 +121,7 @@ function RPR_HOST() {
 
 # ' at ' in cyan outputted only if both user and host enabled
 function RPR_AT() {
-    if [[ "${RPR_SHOW_USER}" == "true" ]] && [[ "${RPR_SHOW_HOST}" == "true" ]]; then
+    if [[ "${RPR_SHOW_USER}" == "true" && "${RPR_SHOW_HOST}" == "true" ]]; then
         echo "%{$fg[cyan]%} at %{$reset_color%}"
     fi
 }
@@ -142,6 +134,7 @@ function RPR_INFO() {
 # Set RHS prompt for git repositories
 DIFF_SYMBOL="-"
 GIT_PROMPT_SYMBOL=""
+GIT_PROMPT_SEPERATOR="%{$fg[violet]%}%B/%b%{$reset_color%}"
 GIT_PROMPT_PREFIX="%{$fg[violet]%}%B(%b%{$reset_color%}"
 GIT_PROMPT_SUFFIX="%{$fg[violet]%}%B)%b%{$reset_color%}"
 GIT_PROMPT_AHEAD="%{$fg[blue]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
@@ -166,38 +159,35 @@ function parse_git_detached() {
 
 # Show different symbols as appropriate for various Git repository states
 # https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
-# (<AHEAD><BEHIND><MERGING> <UNTRACKED><MODIFIED><STAGED><STASHED>)(<branch>)
+# (<AHEAD><BEHIND><MERGING><SEPERATOR><UNTRACKED><MODIFIED><STAGED><STASHED>)(<branch>)
 function parse_git_state() {
-    # Compose this value via multiple conditional appends.
+    # Compose this value via multiple conditional appends
     local GIT_STATE="" GIT_DIFF=""
 
-    local IS_AHEAD="$(git log --oneline @{upstream}.. 2> /dev/null)"
-    [[ -n "$IS_AHEAD" ]] && GIT_STATE=$GIT_STATE${GIT_PROMPT_AHEAD}
+    [[ -n "$(git log --oneline @{upstream}.. 2> /dev/null)" ]] && GIT_STATE="$GIT_STATE$GIT_PROMPT_AHEAD"
 
-    local IS_BEHIND="$(git log --oneline ..@{upstream} 2> /dev/null)"
-    [[ -n "$IS_BEHIND" ]] && GIT_STATE=$GIT_STATE${GIT_PROMPT_BEHIND}
+    [[ -n "$(git log --oneline ..@{upstream} 2> /dev/null)" ]] && GIT_STATE="$GIT_STATE$GIT_PROMPT_BEHIND"
 
-    local GIT_DIR="$(git rev-parse --git-dir 2> /dev/null)"
-    [[ -r "$GIT_DIR/MERGE_HEAD" ]] && GIT_STATE=$GIT_STATE$GIT_PROMPT_MERGING
+    [[ -r "$(git rev-parse --git-dir 2> /dev/null)/MERGE_HEAD" ]] && GIT_STATE="$GIT_STATE$GIT_PROMPT_MERGING"
 
-    [[ -n "$(git ls-files --other --exclude-standard :/ 2> /dev/null)" ]] && GIT_DIFF=$GIT_PROMPT_UNTRACKED
+    [[ -n "$(git ls-files --other --exclude-standard :/ 2> /dev/null)" ]] && GIT_DIFF="$GIT_PROMPT_UNTRACKED"
 
     if ! git diff --quiet 2> /dev/null; then
-        GIT_DIFF=$GIT_DIFF$GIT_PROMPT_MODIFIED
+        GIT_DIFF="$GIT_DIFF$GIT_PROMPT_MODIFIED"
     fi
 
     if ! git diff --cached --quiet 2> /dev/null; then
-        GIT_DIFF=$GIT_DIFF$GIT_PROMPT_STAGED
+        GIT_DIFF="$GIT_DIFF$GIT_PROMPT_STAGED"
     fi
 
     if git rev-parse --verify --quiet refs/stash > /dev/null 2>&1; then
-        GIT_DIFF=$GIT_DIFF$GIT_PROMPT_STASHED
+        GIT_DIFF="$GIT_DIFF$GIT_PROMPT_STASHED"
     fi
 
-    [[ -n "$GIT_STATE" && -n "$GIT_DIFF" ]] && GIT_STATE="$GIT_STATE "
+    [[ -n "$GIT_STATE" && -n "$GIT_DIFF" ]] && GIT_STATE="$GIT_STATE$GIT_PROMPT_SEPERATOR"
     GIT_STATE="$GIT_STATE$GIT_DIFF"
 
-    [[ -n $GIT_STATE ]] && echo "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
+    [[ -n "$GIT_STATE" ]] && echo "$GIT_PROMPT_PREFIX$GIT_STATE$GIT_PROMPT_SUFFIX"
 }
 
 # If inside a Git repository, print its branch and state
@@ -206,7 +196,7 @@ function git_prompt_string() {
         local git_where="$(parse_git_branch)"
         local git_detached="$(parse_git_detached)"
         [[ -n "$git_where" ]] && \
-            echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$GIT_PROMPT_SUFFIX"
+        echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b%{$reset_color%}$GIT_PROMPT_SUFFIX"
     fi
 }
 
