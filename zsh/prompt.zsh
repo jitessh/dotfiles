@@ -150,6 +150,7 @@ GIT_PROMPT_MERGING="%{$fg[cyan]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_UNTRACKED="%{$fg[red]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_MODIFIED="%{$fg[yellow]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_STAGED="%{$fg[green]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
+GIT_PROMPT_STASHED="%{$fg[pink]%}%B$DIFF_SYMBOL%b%{$reset_color%}"
 GIT_PROMPT_DETACHED="%{$fg[neon]%}%B@%b%{$reset_color%}"
 
 # Show Git branch/tag, or name-rev if on detached head
@@ -164,7 +165,8 @@ function parse_git_detached() {
 }
 
 # Show different symbols as appropriate for various Git repository states
-# (<AHEAD><BEHIND><MERGING> <UNTRACKED><MODIFIED><STAGED>)(<branch>)
+# https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
+# (<AHEAD><BEHIND><MERGING> <UNTRACKED><MODIFIED><STAGED><STASHED>)(<branch>)
 function parse_git_state() {
     # Compose this value via multiple conditional appends.
     local GIT_STATE="" GIT_DIFF=""
@@ -188,6 +190,10 @@ function parse_git_state() {
         GIT_DIFF=$GIT_DIFF$GIT_PROMPT_STAGED
     fi
 
+    if git rev-parse --verify --quiet refs/stash > /dev/null 2>&1; then
+        GIT_DIFF=$GIT_DIFF$GIT_PROMPT_STASHED
+    fi
+
     [[ -n "$GIT_STATE" && -n "$GIT_DIFF" ]] && GIT_STATE="$GIT_STATE "
     GIT_STATE="$GIT_STATE$GIT_DIFF"
 
@@ -199,7 +205,7 @@ function git_prompt_string() {
     if [[ "${RPR_SHOW_GIT}" == "true" ]]; then
         local git_where="$(parse_git_branch)"
         local git_detached="$(parse_git_detached)"
-        [ -n "$git_where" ] && \
+        [[ -n "$git_where" ]] && \
             echo "$GIT_PROMPT_SYMBOL$(parse_git_state)$GIT_PROMPT_PREFIX$git_detached%{$fg[magenta]%}%B${git_where#(refs/heads/|tags/)}%b$GIT_PROMPT_SUFFIX"
     fi
 }
