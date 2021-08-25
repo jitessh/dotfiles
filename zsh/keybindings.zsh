@@ -28,3 +28,33 @@ bindkey -a "^L" end-of-line
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^E' edit-command-line
+
+# fix weird behaviour of backspace not working in viins
+# https://github.com/spaceship-prompt/spaceship-prompt/issues/91
+bindkey -v '^?' backward-delete-char
+
+# different cursors to indicate vi mode
+# https://ttssh2.osdn.jp/manual/4/en/usage/tips/vim.html for cursor shapes
+cursor_mode() {
+    # cursor_beam='\e[6 q'
+    cursor_block='\e[2 q'
+    cursor_uline='\e[4 q'
+
+    function zle-keymap-select {
+        if [[ ${KEYMAP} == vicmd ]]; then
+            echo -ne $cursor_uline
+        elif [[ ${KEYMAP} == main ]] ||
+            [[ ${KEYMAP} == viins ]] ||
+            [[ ${KEYMAP} = '' ]]; then
+            echo -ne $cursor_block
+        fi
+    }
+
+    zle-line-init() {
+        echo -ne $cursor_block
+    }
+
+    zle -N zle-keymap-select
+    zle -N zle-line-init
+}
+cursor_mode
