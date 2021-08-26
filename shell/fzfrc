@@ -4,7 +4,7 @@
 # don't source this file if fzf is not installed
 command -v fzf >/dev/null 2>&1 || return 0
 
-alias btrfzf="fzf -0 --border=rounded --height=45% --info=inline"
+alias btrfzf="fzf -0 --height=45% --reverse"
 alias clipbd="xclip -r -selection clipboard"
 alias devar="unset var"
 
@@ -20,13 +20,13 @@ cf() {
     devar; return 0
 }
 
-# ch [change here]: cd from current dir
+# ch [change hidden/here]: cd from current dir including hidden
 ch() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow | btrfzf --prompt="cd ")"
+        var="$(fd -d5 -td --follow --hidden --exclude '\.git*' | btrfzf --prompt="cd ")"
     else
-        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt="cd ")"
+        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.git*' | btrfzf --prompt="cd ")"
     fi
     [ -n "$var" ] && cd "$var"
     devar; return 0
