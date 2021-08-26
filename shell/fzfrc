@@ -6,93 +6,93 @@ command -v fzf >/dev/null 2>&1 || return 0
 
 alias btrfzf="fzf -0 --border=rounded --height=45% --info=inline"
 alias clipbd="xclip -r -selection clipboard"
+alias devar="unset var"
 
 # cf [change fuzzy]: cd from $HOME
 cf() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
-    local var
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --search-path ~ | btrfzf --prompt='cd ')"
+        var="$(fd -d5 -td --follow --search-path ~ | btrfzf --prompt="cd ")"
     else
-        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt='cd ')"
+        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt="cd ")"
     fi
-    [ -n "$var" ] && cd "$var"; return 0
+    [ -n "$var" ] && cd "$var"
+    devar; return 0
 }
 
 # ch [change here]: cd from current dir
 ch() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
-    local var
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow | btrfzf --prompt='cd ')"
+        var="$(fd -d5 -td --follow | btrfzf --prompt="cd ")"
     else
-        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt='cd ')"
+        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt="cd ")"
     fi
-    [ -n "$var" ] && cd "$var"; return 0
+    [ -n "$var" ] && cd "$var"
+    devar; return 0
 }
 
 # vif [vi fuzzy]: open a file in $EDITOR
 vif() {
     [ -n "$1" ] && "$EDITOR" "$1" && return 0
-    local var
-    var="$(btrfzf --prompt='edit ')"
-    [ -n "$var" ] && "$EDITOR" "$var"; return 0
+    var="$(btrfzf --prompt="edit ")"
+    [ -n "$var" ] && "$EDITOR" "$var"
+    devar; return 0
 }
 
 # pdf [pdfuzzy]: open pdf/epub in zathura
 if command -v zathura >/dev/null; then
 pdf() {
-    local var
     if command -v fd >/dev/null; then
         var="$(fd -e pdf -e epub)"
     else
         var="$(find . -type f -name "*.pdf" -o -name "*.epub")"
     fi
-    echo "$var" | btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt='zathura ' >/dev/null
-    return 0
+    echo "$var" | btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt="zathura " >/dev/null
+    devar; return 0
 }
 fi
 
 # fox [fuzzy xdg-open]: open any file with xdg-open
 fox() {
-    btrfzf --bind "enter:execute|xdg-open {} 2>/dev/null &|,enter:+print-query" --prompt='xdg-open ' >/dev/null
+    btrfzf --bind "enter:execute|xdg-open {} 2>/dev/null &|,enter:+print-query" --prompt="xdg-open " >/dev/null
     return 0
 }
 
 # hst [history]: search command line history & copy selected
 hst() {
-    local var
-    var="$(history | cut -c8- | btrfzf --multi --tac --prompt='history ')"
-    [ -n "$var" ] && echo "$var" | clipbd; return 0
+    var="$(history | cut -c8- | btrfzf --multi --tac --prompt="history ")"
+    [ -n "$var" ] && echo "$var" | clipbd
+    devar; return 0
 }
 
 # i use arch btw
 if [ -f "/etc/arch-release" ]; then
 # pacls [pacman list]: list all installed packages
 pacls() {
-    local var
-    var="$(pacman -Qq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt='pkg ')"
-    [ -n "$var" ] && echo "$var" | clipbd; return 0
+    var="$(pacman -Qq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt="pkg ")"
+    [ -n "$var" ] && echo "$var" | clipbd
+    devar; return 0
 }
 
 # pacfd [pacman find]: find a package
 pacfd() {
-    local var
-    var="$(pacman -Slq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt='pkg ')"
-    [ -n "$var" ] && echo "$var" | clipbd; return 0
+    var="$(pacman -Slq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt="pkg ")"
+    [ -n "$var" ] && echo "$var" | clipbd
+    devar; return 0
 }
 
 # yayls [yay list]: list all installed AUR packages
 yayls() {
-    local var
-    var="$(yay -Qmq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt='pkg ')"
-    [ -n "$var" ] && echo "$var" | clipbd; return 0
+    var="$(yay -Qmq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt="pkg ")"
+    [ -n "$var" ] && echo "$var" | clipbd
+    devar; return 0
 }
 
 # yayfd [yay find]: find an AUR package
 yayfd() {
-    local var
-    var="$(yay -Slaq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt='pkg ')"
-    [ -n "$var" ] && echo "$var" | clipbd; return 0
+    var="$(yay -Slaq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt="pkg ")"
+    [ -n "$var" ] && echo "$var" | clipbd
+    devar; return 0
 }
 fi
