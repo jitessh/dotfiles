@@ -8,27 +8,27 @@ alias btrfzf="fzf -0 --height=45% --reverse"
 alias clipbd="xclip -r -selection clipboard"
 alias devar="unset var"
 
-# cf [change fuzzy]: cd from $HOME
+# cf [cd fuzzy]: cd from $HOME
 cf() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --search-path ~ | btrfzf --prompt="cd ")"
+        var="$(fd -d5 -td --follow --search-path ~ 2>/dev/null | btrfzf --prompt="cd ")"
     else
-        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' | btrfzf --prompt="cd ")"
+        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' 2>/dev/null | btrfzf --prompt="cd ")"
     fi
-    [ -n "$var" ] && cd "$var"
+    [ -n "$var" ] && cd "$var" 2>/dev/null
     devar; return 0
 }
 
-# ch [change hidden/here]: cd from current dir including hidden
+# ch [cd hidden/here]: cd from current dir including hidden
 ch() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --hidden --exclude '\.git*' | btrfzf --prompt="cd ")"
+        var="$(fd -d5 -td --follow --hidden --exclude '\.git*' 2>/dev/null | btrfzf --prompt="cd ")"
     else
-        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.git*' | btrfzf --prompt="cd ")"
+        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.git*' 2>/dev/null | btrfzf --prompt="cd ")"
     fi
-    [ -n "$var" ] && cd "$var"
+    [ -n "$var" ] && cd "$var" 2>/dev/null
     devar; return 0
 }
 
@@ -43,13 +43,13 @@ vif() {
 # pdf [pdfuzzy]: open pdf/epub in zathura
 if command -v zathura >/dev/null; then
 pdf() {
+    alias pdfzf='btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt="zathura " >/dev/null'
     if command -v fd >/dev/null; then
-        var="$(fd -e pdf -e epub)"
+        var="$(fd -e pdf -e epub 2>/dev/null | pdfzf)"
     else
-        var="$(find . -type f -name "*.pdf" -o -name "*.epub")"
+        var="$(find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | pdfzf)"
     fi
-    echo "$var" | btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt="zathura " >/dev/null
-    devar; return 0
+    devar; unalias pdfzf; return 0
 }
 fi
 
