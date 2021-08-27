@@ -66,6 +66,24 @@ hst() {
     devar; return 0
 }
 
+# gifs [git fuzzy show]: git commit browser
+gifs() {
+    # j/k for down/up, J/K scrolls preview pane, Enter to show diff
+    # https://gist.github.com/junegunn/f4fca918e937e6bf5bad
+    [ -z "$(git rev-parse --git-dir 2>/dev/null)" ] && return 0
+    git log --graph --color=always --format="%C(auto)%h%d %s %C(bold black)%cN, %cr"  | \
+    fzf --ansi --no-sort --reverse --tiebreak=index --preview \
+    'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always "$1"; }; f {}' \
+    --preview-window "down:65%" \
+    --bind "j:down,k:up" \
+    --bind "J:preview-half-page-down,K:preview-half-page-up" \
+    --bind "ctrl-m:execute:
+            (grep -o '[a-f0-9]\{7\}' | head -1 |
+            xargs -I % git show --color=always % | less -R) << 'FZF-EOF'
+            {} FZF-EOF"
+    return 0
+}
+
 # i use arch btw
 if [ -f "/etc/arch-release" ]; then
 # pacls [pacman list]: list all installed packages
