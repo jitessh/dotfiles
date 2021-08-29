@@ -4,7 +4,11 @@
 # don't source this file if fzf is not installed
 command -v fzf >/dev/null 2>&1 || return 0
 
-alias btrfzf="fzf -0 --height=45% --reverse"
+# default fzf options
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} -0 --height '45%' --reverse"
+# vi like navigation with J/K
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --bind 'J:down,K:up'"
+
 alias clipbd="xclip -r -selection clipboard"
 alias devar="unset var"
 
@@ -12,9 +16,9 @@ alias devar="unset var"
 cf() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --search-path ~ 2>/dev/null | btrfzf --prompt="cd ")"
+        var="$(fd -d5 -td --follow --search-path ~ 2>/dev/null | fzf --prompt "cd ")"
     else
-        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' 2>/dev/null | btrfzf --prompt="cd ")"
+        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' 2>/dev/null | fzf --prompt "cd ")"
     fi
     [ -n "$var" ] && cd "$var" 2>/dev/null
     devar; return 0
@@ -24,9 +28,9 @@ cf() {
 ch() {
     [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --hidden --exclude '\.git*' 2>/dev/null | btrfzf --prompt="cd ")"
+        var="$(fd -d5 -td --follow --hidden --exclude '\.git*' 2>/dev/null | fzf --prompt "cd ")"
     else
-        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.git*' 2>/dev/null | btrfzf --prompt="cd ")"
+        var="$(find -L . -maxdepth 5 -type d -not -path '*/\.git*' 2>/dev/null | fzf --prompt "cd ")"
     fi
     [ -n "$var" ] && cd "$var" 2>/dev/null
     devar; return 0
@@ -35,7 +39,7 @@ ch() {
 # vif [vi fuzzy]: open a file in $EDITOR
 vif() {
     [ -n "$1" ] && "$EDITOR" "$1" && return 0
-    var="$(btrfzf --prompt="edit ")"
+    var="$(fzf --prompt "edit ")"
     [ -n "$var" ] && "$EDITOR" "$var"
     devar; return 0
 }
@@ -43,25 +47,24 @@ vif() {
 # pdf [pdfuzzy]: open pdf/epub in zathura
 if command -v zathura >/dev/null; then
 pdf() {
-    alias pdfzf='btrfzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt="zathura " >/dev/null'
     if command -v fd >/dev/null; then
-        var="$(fd -e pdf -e epub 2>/dev/null | pdfzf)"
+        fd -e pdf -e epub 2>/dev/null | fzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt "zathura " >/dev/null
     else
-        var="$(find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | pdfzf)"
+        find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | fzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt "zathura " >/dev/null
     fi
-    devar; unalias pdfzf; return 0
+    devar; return 0
 }
 fi
 
 # fox [fuzzy xdg-open]: open any file with xdg-open
 fox() {
-    btrfzf --bind "enter:execute|xdg-open {} 2>/dev/null &|,enter:+print-query" --prompt="xdg-open " >/dev/null
+    fzf --bind "enter:execute|xdg-open {} 2>/dev/null &|,enter:+print-query" --prompt "xdg-open " >/dev/null
     return 0
 }
 
 # hst [history]: search command line history & copy selected
 hst() {
-    var="$(history | cut -c8- | btrfzf --multi --tac --prompt="history ")"
+    var="$(history | cut -c8- | fzf --multi --tac --prompt "history ")"
     [ -n "$var" ] && echo "$var" | clipbd
     devar; return 0
 }
@@ -72,7 +75,7 @@ gifs() {
     # https://gist.github.com/junegunn/f4fca918e937e6bf5bad
     [ -z "$(git rev-parse --git-dir 2>/dev/null)" ] && return 0
     git log --graph --color=always --format="%C(auto)%h%d %s %C(bold black)%cN, %cr"  | \
-    fzf --ansi --no-sort --reverse --tiebreak=index --preview \
+    fzf --ansi --no-sort --reverse --height "100%" --tiebreak "index" --preview \
     'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always "$1"; }; f {}' \
     --preview-window "down:65%" \
     --bind "j:down,k:up" \
@@ -88,28 +91,28 @@ gifs() {
 if [ -f "/etc/arch-release" ]; then
 # pacls [pacman list]: list all installed packages
 pacls() {
-    var="$(pacman -Qq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt="pkg ")"
+    var="$(pacman -Qq | fzf --height "100%" --multi --preview "pacman -Si {1}" --preview-window "right:70%" --prompt "pkg ")"
     [ -n "$var" ] && echo "$var" | clipbd
     devar; return 0
 }
 
 # pacfd [pacman find]: find a package
 pacfd() {
-    var="$(pacman -Slq | btrfzf --height=100% --multi --preview "pacman -Si {1}" --prompt="pkg ")"
+    var="$(pacman -Slq | fzf --height "100%" --multi --preview "pacman -Si {1}" --preview-window "right:70%" --prompt "pkg ")"
     [ -n "$var" ] && echo "$var" | clipbd
     devar; return 0
 }
 
 # yayls [yay list]: list all installed AUR packages
 yayls() {
-    var="$(yay -Qmq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt="pkg ")"
+    var="$(yay -Qmq | fzf --height "100%" --multi --preview "yay -Si {1}" --preview-window "right:70%" --prompt "pkg ")"
     [ -n "$var" ] && echo "$var" | clipbd
     devar; return 0
 }
 
 # yayfd [yay find]: find an AUR package
 yayfd() {
-    var="$(yay -Slaq | btrfzf --height=100% --multi --preview "yay -Si {1}" --prompt="pkg ")"
+    var="$(yay -Slaq | fzf --height "100%" --multi --preview "yay -Si {1}" --preview-window "right:70%" --prompt "pkg ")"
     [ -n "$var" ] && echo "$var" | clipbd
     devar; return 0
 }
