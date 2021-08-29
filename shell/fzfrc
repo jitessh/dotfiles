@@ -7,7 +7,7 @@ command -v fzf >/dev/null 2>&1 || return 0
 # default fzf options
 export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} -0 --height '45%' --reverse"
 # vi like navigation with J/K
-export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --bind 'J:down,K:up'"
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --bind 'J:down,K:up,Q:cancel'"
 
 alias clipbd="xclip -r -selection clipboard"
 alias devar="unset var"
@@ -51,10 +51,10 @@ pdf() {
         fd -e pdf -e epub 2>/dev/null | fzf --prompt "zathura " \
             --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" >/dev/null
     else
-        find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | fzf --prompt "zathura " \
+        find . -type f -not -path "*/\.*" -name "*.pdf" -o -name "*.epub" 2>/dev/null | fzf --prompt "zathura " \
             --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" >/dev/null
     fi
-    devar; return 0
+    return 0
 }
 fi
 
@@ -80,20 +80,22 @@ gifs() {
     commit_copy="$commit_hash | xclip -r -selection clipboard"
     commit_cout="$commit_hash | xargs -I % sh -c 'git checkout %'"
     commit_view="$commit_hash | xargs -I % sh -c 'git show --color=always % | less -R'"
+    commit_word="$commit_hash | xargs -I % sh -c 'git show --color=always --color-words % | less -R'"
 
     git log --graph --color=always --format="%C(auto)%h%d %s %C(bold black)%cN, %cr" | \
     fzf --ansi --no-sort --reverse --height "100%" --tiebreak "index" \
     --preview "$commit_view" \
     --preview-window "down:65%" \
-    --bind "j:down,k:up,Q:abort" \
+    --bind "j:down,k:up,Q:cancel" \
     --bind "K:preview-half-page-up" \
     --bind "J:preview-half-page-down" \
+    --bind "tab:execute:$commit_word" \
     --bind "ctrl-m:execute:$commit_view" \
     --bind "ctrl-x:execute:$commit_cout" \
     --bind "Y:execute-silent:$commit_copy" \
-    --header "[j/k]: down/up [J/K]: scroll preview [Y]: yank hash [Q]: quit [ctrl-x]: checkout [enter]: show"
+    --header "[j/k]: down/up [J/K]: scroll preview [Y]: yank hash [Q]: clear/quit [ctrl-x]: checkout [tab]: show --color-words [enter]: show"
 
-    unset commit_hash commit_copy commit_cout commit_view
+    unset commit_hash commit_copy commit_cout commit_view commit_word
     return 0
 }
 
