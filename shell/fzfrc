@@ -48,9 +48,11 @@ vif() {
 if command -v zathura >/dev/null; then
 pdf() {
     if command -v fd >/dev/null; then
-        fd -e pdf -e epub 2>/dev/null | fzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt "zathura " >/dev/null
+        fd -e pdf -e epub 2>/dev/null | fzf --prompt "zathura " \
+            --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" >/dev/null
     else
-        find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | fzf --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" --prompt "zathura " >/dev/null
+        find . -type f -name "*.pdf" -o -name "*.epub" 2>/dev/null | fzf --prompt "zathura " \
+            --bind "enter:execute|zathura {} 2>/dev/null &|,enter:+print-query" >/dev/null
     fi
     devar; return 0
 }
@@ -71,19 +73,27 @@ hst() {
 
 # gifs [git fuzzy show]: git commit browser
 gifs() {
-    # j/k for down/up, J/K scrolls preview pane, Enter to show diff
     # https://gist.github.com/junegunn/f4fca918e937e6bf5bad
     [ -z "$(git rev-parse --git-dir 2>/dev/null)" ] && return 0
-    git log --graph --color=always --format="%C(auto)%h%d %s %C(bold black)%cN, %cr"  | \
-    fzf --ansi --no-sort --reverse --height "100%" --tiebreak "index" --preview \
-    'f() { set -- $(echo -- "$@" | grep -o "[a-f0-9]\{7\}"); [ $# -eq 0 ] || git show --color=always "$1"; }; f {}' \
+
+    commit_hash="echo {} | grep -o '[a-f0-9]\{7\}' | head -1"
+    commit_copy="$commit_hash | xclip -r -selection clipboard"
+    commit_cout="$commit_hash | xargs -I % sh -c 'git checkout %'"
+    commit_view="$commit_hash | xargs -I % sh -c 'git show --color=always % | less -R'"
+
+    git log --graph --color=always --format="%C(auto)%h%d %s %C(bold black)%cN, %cr" | \
+    fzf --ansi --no-sort --reverse --height "100%" --tiebreak "index" \
+    --preview "$commit_view" \
     --preview-window "down:65%" \
-    --bind "j:down,k:up" \
-    --bind "J:preview-half-page-down,K:preview-half-page-up" \
-    --bind "ctrl-m:execute:
-            (grep -o '[a-f0-9]\{7\}' | head -1 |
-            xargs -I % git show --color=always % | less -R) << 'FZF-EOF'
-            {} FZF-EOF"
+    --bind "j:down,k:up,Q:abort" \
+    --bind "K:preview-half-page-up" \
+    --bind "J:preview-half-page-down" \
+    --bind "ctrl-m:execute:$commit_view" \
+    --bind "ctrl-x:execute:$commit_cout" \
+    --bind "Y:execute-silent:$commit_copy" \
+    --header "[j/k]: down/up [J/K]: scroll preview [Y]: yank hash [Q]: quit [ctrl-x]: checkout [enter]: show"
+
+    unset commit_hash commit_copy commit_cout commit_view
     return 0
 }
 
