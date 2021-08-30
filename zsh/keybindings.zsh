@@ -7,7 +7,12 @@ bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 
-# undo & redo in vicmd mode
+# other vicmd bindings
+bindkey -a 'H' vi-beginning-of-line
+bindkey -a 'J' down-history
+bindkey -a 'K' up-history
+bindkey -a 'L' vi-end-of-line
+bindkey -a 'U' vi-swap-case
 bindkey -a 'u' undo
 bindkey -a '^R' redo
 
