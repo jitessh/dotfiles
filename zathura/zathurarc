@@ -7,8 +7,10 @@ set render-loading true
 set statusbar-h-padding 0
 set statusbar-v-padding 0
 set statusbar-home-tilde true
+set window-title-basename true
 set selection-notification false
 set selection-clipboard clipboard
+set font "JetBrainsMono Nerd Font Mono Regular"
 
 # navigation
 map u scroll half-up
