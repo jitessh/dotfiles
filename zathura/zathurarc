@@ -1,7 +1,12 @@
 # general
+set recolor true
+set guioptions ""
 set page-padding 3
+set adjust-open width
+set render-loading true
 set statusbar-h-padding 0
 set statusbar-v-padding 0
+set statusbar-home-tilde true
 set selection-notification false
 set selection-clipboard clipboard
 
@@ -26,3 +31,33 @@ map i recolor
 map p print
 map r reload
 map R rotate
+
+# dracula color theme
+set notification-error-bg   "#ff5555"
+set notification-error-fg   "#c8ccd4"
+set notification-warning-bg "#ffb86c"
+set notification-warning-fg "#44475a"
+set notification-bg         "#1e222a"
+set notification-fg         "#c8ccd4"
+set completion-bg           "#1e222a"
+set completion-fg           "#81A1C1"
+set completion-group-bg     "#1e222a"
+set completion-group-fg     "#81A1C1"
+set completion-highlight-bg "#44475a"
+set completion-highlight-fg "#c8ccd4"
+set index-bg                "#1e222a"
+set index-fg                "#c8ccd4"
+set index-active-bg         "#44475a"
+set index-active-fg         "#c8ccd4"
+set inputbar-bg             "#1e222a"
+set inputbar-fg             "#c8ccd4"
+set statusbar-bg            "#1e222a"
+set statusbar-fg            "#c8ccd4"
+set highlight-color         "#ffb86c"
+set highlight-active-color  "#ff79c6"
+set default-bg              "#1e222a"
+set default-fg              "#c8ccd4"
+set render-loading-fg       "#1e222a"
+set render-loading-bg       "#c8ccd4"
+set recolor-lightcolor      "#1e222a"
+set recolor-darkcolor       "#c8ccd4"
