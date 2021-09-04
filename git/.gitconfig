@@ -1,0 +1,37 @@
+[alias]
+	br = branch -vv
+	bra = branch -vv --all
+	cm = commit -v
+	cma = commit -v --amend
+	save = commit -m "Save"
+	co = checkout
+	com = checkout master
+	credit = shortlog -sn
+	df = diff
+	dfc = diff --cached
+	dfw = diff --color-words
+	dcw = diff --cached --color-words
+	dfs = diff --stat
+	dsc = diff --stat --cached
+	count = diff --stat "4b825dc642cb6eb9a060e54bf8d69288fbee4904" # hash of empty tree
+	gra = log --graph --format=line --all
+	grad = log --graph --format=detail --all
+	l = log --graph --color --decorate
+	lo = log --graph --color --decorate --oneline
+	root = rev-parse --show-toplevel
+	sf = show --format=fuller --show-signature
+	sfw = show --format=fuller --color-words
+	st = status -sb
+
+[core]
+	excludesfile = ~/.config/git/gitignore_global
+	editor = vim
+	pager = less
+
+[pretty]
+	line = "%C(auto)%h %<|(60,trunc)%s %C(green)%ad%C(auto)%d"
+	detail = "%C(auto)%h %s%n  %C(yellow)by %C(blue)%an %C(magenta)<%ae> [%G?] %C(green)%ad%n %C(auto)%d%n"
+
+# local customizations
+[include]
+	path = ~/.config/git/gitconfig_local

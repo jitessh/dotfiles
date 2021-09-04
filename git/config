@@ -1,0 +1,4 @@
+# read .gitconfig from ~/.config/git
+# to get syntax highlighting
+[include]
+	path = ~/.config/git/.gitconfig
