@@ -1,0 +1,16 @@
+/* ----------- fonts ----------- */
+Xft.antialias:  true
+Xft.hinting:    true
+Xft.rgba:       rgb
+Xft.autohint:   true
+Xft.hintstyle:  hintfull
+Xft.lcdfilter:  lcdfilter
+
+/* only files in ~/.config/x11 can be included with #include */
+/* because it is hardcoded in ~/.xprofile with xrdb's -I opt */
+
+/* ------- colorschemes -------- */
+#include "onedark.Xresources"
+
+/* ---- local customizations --- */
+#include "Xresources_local"
