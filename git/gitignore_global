@@ -1,0 +1,20 @@
+# ------- compiled source ------- #
+*.exe
+*.o
+*.out
+*.pyc
+
+# --------- editor stuff -------- #
+[._]*.sw[a-p]
+[._]*.s[a-v][a-z]
+.ipynb_checkpoints/
+
+# ------------- logs ------------ #
+*.log
+
+# --------- OS generated -------- #
+._*
+.DS_Store?
+Icon?
+Thumbs.db
+.Trashes
