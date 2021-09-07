@@ -28,6 +28,22 @@
 	editor = vim
 	pager = less
 
+[diff]
+	mnemonicPrefix = true
+	wordRegex = "[^[:space:]]|([[:alnum:]]|UTF_8_GUARD)+"
+
+# https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-config
+[color]
+	ui = auto
+
+[color "diff"]
+	meta = blue bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	commit = yellow bold
+	whitespace = red reverse
+
 [pretty]
 	line = "%C(auto)%h %<|(60,trunc)%s %C(green)%ad%C(auto)%d"
 	detail = "%C(auto)%h %s%n  %C(yellow)by %C(blue)%an %C(magenta)<%ae> [%G?] %C(green)%ad%n %C(auto)%d%n"
