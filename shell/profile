@@ -1,5 +1,7 @@
 #!/bin/sh
 # profile - runs on login
+#           read by login shell
+#           set environment variables here
 
 # XDG base directory
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -13,8 +15,3 @@ export XINITRC="${XDG_CONFIG_HOME:-$HOME/.config}/x11/xinitrc"
 
 # zsh config dir
 export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-
-# default apps
-export BROWSER="firefox"
-export EDITOR="vim"
-export TERMINAL="st"
