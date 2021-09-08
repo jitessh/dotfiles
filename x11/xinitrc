@@ -1,0 +1,13 @@
+#!/bin/sh
+# xinitrc - runs automatically when you run startx/xinit
+
+# since this file is not in ~, you need to pass filename
+# as an argument to startx. xinit respects $XINITRC (set
+# to $XDG_CONFIG_HOME/x11/xinitrc) & should work without
+# any issue.
+
+# set up X user session
+[ -f ~/.xprofile ] && . ~/.xprofile
+
+# start WM/DE
+exec dwm
