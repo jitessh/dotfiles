@@ -1,5 +1,4 @@
 #!/bin/sh
 # xprofile - read by display managers at the beginning of the X user session
 
-# load Xresources
-xrdb -I "${XDG_CONFIG_HOME:-$HOME/.config}/x11" "${XDG_CONFIG_HOME:-$HOME/.config}/x11/Xresources"
+[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xprofile" ] && source "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xprofile"
