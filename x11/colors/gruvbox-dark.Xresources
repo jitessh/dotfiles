@@ -1,0 +1,19 @@
+/* https://github.com/morhetz/gruvbox-contrib */
+*.background:   #1D2021
+*.foreground:   #EBDBB2
+*.color0:       #282828
+*.color8:       #928374
+*.color1:       #CC241D
+*.color9:       #FB4934
+*.color2:       #98971A
+*.color10:      #B8BB26
+*.color3:       #D79921
+*.color11:      #FABD2F
+*.color4:       #458588
+*.color12:      #83A598
+*.color5:       #B16286
+*.color13:      #D3869B
+*.color6:       #689D6A
+*.color14:      #8EC07C
+*.color7:       #A89984
+*.color15:      #EBDBB2

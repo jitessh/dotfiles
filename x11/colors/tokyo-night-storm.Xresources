@@ -1,0 +1,20 @@
+/* https://github.com/ghifarit53/tokyonight-vim */
+*.foreground:   #A9B1D6
+*.background:   #24283B
+*.cursorColor:  #A9B1D6
+*.color0:       #24283B
+*.color8:       #525B87
+*.color1:       #F7768E
+*.color9:       #FF7A92
+*.color2:       #9ECE6A
+*.color10:      #A5D96F
+*.color3:       #E0AF68
+*.color11:      #EDBA6D
+*.color4:       #7AA2F7
+*.color12:      #7DA6FF
+*.color5:       #9A7ECC
+*.color13:      #A586D9
+*.color6:       #4ABAAF
+*.color14:      #4ABAAF
+*.color7:       #ACB0D0
+*.color15:      #B6BADB
