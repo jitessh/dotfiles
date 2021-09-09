@@ -1,4 +1,4 @@
-/* ----------- fonts ----------- */
+/* ------------------------- fonts ------------------------- */
 Xft.antialias:  true
 Xft.hinting:    true
 Xft.rgba:       rgb
@@ -9,8 +9,9 @@ Xft.lcdfilter:  lcdfilter
 /* only files in ~/.config/x11 can be included with #include */
 /* because it is hardcoded in ~/.xprofile with xrdb's -I opt */
 
-/* ------- colorschemes -------- */
-#include "colors/tokyo-night.Xresources"
+/* ---------------------- colorschemes --------------------- */
+/* colorschemes in Xresources_local to avoid useless commits */
+/* #include "colors/tokyo-night.Xresources" */
 
-/* ---- local customizations --- */
+/* ------------------ local customizations ----------------- */
 #include "Xresources_local"
