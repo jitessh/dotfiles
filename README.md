@@ -4,8 +4,8 @@
     <p></p>
 </div>
 
-My dotfiles are deployed by [dotinit](https://github.com/voidstarsh/dotinit).
-You can mirror my setup with `sh -c "$(curl -fsSL git.io/voidstart)"`.
+My dotfiles are deployed by [dotinit](https://github.com/pixxel8/dotinit).
+You can mirror my setup with `sh -c "$(curl -fsSL git.io/pixinit)"`.
 
 But before you do so, let me give you a tour of my ~.
 
