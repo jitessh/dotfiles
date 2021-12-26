@@ -75,19 +75,24 @@ alias \
 alias \
     :q='exit' \
     :x='exit' \
+    c='clear' \
     cb='xclip -r -selection c' \
     clock='watch -t -n 1 "date +%H:%M:%S"' \
     colr='for i in {0..255}; do print -Pn "%K{$i} %k%F{$i}${(l:3::0:)i}%f " ${${(M)$((i%8)):#7}:+"\n"}; done' \
+    duh='du -h' \
+    dush='du -sh' \
     open='xdg-open 2> /dev/null' \
+    s='startx "${XDG_CONFIG_HOME:-$HOME/.config}/x11/xinitrc"' \
     ssd='systemctl suspend && exit'
 
 
 # ---------------- dir -----------------
-alias \
-    ...=../.. \
-    ....=../../.. \
-    .....=../../../.. \
-    ......=../../../../.. \
+alias -- \
+    -='cd -' \
+    ...='cd ../..' \
+    ....='cd ../../..' \
+    .....='cd ../../../..' \
+    ......='cd ../../../../..' \
     1='cd -' \
     2='cd -2' \
     3='cd -3' \
