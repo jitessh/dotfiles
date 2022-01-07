@@ -6,6 +6,12 @@ zmodload zsh/complist
 # tab complete hidden files
 _comp_options+=(globdots)
 
+# man zshcompsys for matcher-list
+# match case insensitively
+# allow partial completion before ., _ or -
+# allow completing on the left side of the written text
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+
 # better history
 export HISTFILE="${XDG_CACHE_HOME:-$HOME/.cache}/zsh_history"
 export HISTSIZE=1000000000
