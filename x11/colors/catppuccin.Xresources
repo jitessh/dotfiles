@@ -1,0 +1,20 @@
+/* https://github.com/catppuccin/xresources */
+*.foreground:   #DADAE8
+*.background:   #1E1E28
+*.cursorColor:  #B1E3AD
+*.color0:       #6E6C7E
+*.color8:       #6E6C7E
+*.color1:       #E38C8F
+*.color9:       #E38C8F
+*.color2:       #B1E3AD
+*.color10:      #B1E3AD
+*.color3:       #EBDDAA
+*.color11:      #EBDDAA
+*.color4:       #A4B9EF
+*.color12:      #A4B9EF
+*.color5:       #C6AAE8
+*.color13:      #C6AAE8
+*.color6:       #E5B4E2
+*.color14:      #E5B4E2
+*.color7:       #DADAE8
+*.color15:      #DADAE8

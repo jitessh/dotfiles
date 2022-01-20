@@ -1,0 +1,19 @@
+/* https://github.com/Mangeshrex/uwu.vim */
+*.foreground:   #C5C8C9
+*.background:   #131A1C
+*.color0:       #1B2224
+*.color8:       #232A2C
+*.color1:       #F65B5B
+*.color9:       #C26F6F
+*.color2:       #6BB05D
+*.color10:      #8DC776
+*.color3:       #E59E67
+*.color11:      #E7AC7E
+*.color4:       #58ACC4
+*.color12:      #6CBAD1
+*.color5:       #B185DB
+*.color13:      #BB8FE5
+*.color6:       #51A39F
+*.color14:      #6DB0AD
+*.color7:       #C4C4C4
+*.color15:      #CCCCCC
