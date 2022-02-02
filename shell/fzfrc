@@ -12,17 +12,20 @@ export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS} --bind 'J:down,K:up,Q:cancel'"
 alias clipbd="xclip -r -selection clipboard"
 alias devar="unset var"
 
-# cf [cd fuzzy]: cd from $HOME
-cf() {
-    [ -n "$1" ] && cd "$1" 2>/dev/null && return 0
+# cdf [cd fuzzy]: cd from $1 with maxdepth $2 (acts as cf if no arguments are passed)
+cdf() {
     if command -v fd >/dev/null; then
-        var="$(fd -d5 -td --follow --search-path ~ 2>/dev/null | fzf --prompt "cd ")"
+        var="$(fd -d "${2:-5}" -td --follow --search-path "${1:-$HOME}" 2>/dev/null | fzf --prompt "cd ")"
     else
-        var="$(find -L "$HOME" -maxdepth 5 -type d -not -path '*/\.*' 2>/dev/null | fzf --prompt "cd ")"
+        var="$(find -L "${1:-$HOME}" -maxdepth "${2:-5}" -type d -not -path '*/\.*' 2>/dev/null | fzf --prompt "cd ")"
     fi
     [ -n "$var" ] && cd "$var" 2>/dev/null
     devar; return 0
 }
+
+alias cf='cdf "$HOME" 5'  # cdf from $HOME
+alias ct='cdf /tmp 5'     # cdf from /tmp
+alias cr='cdf / 2'        # cdf from /
 
 # ch [cd hidden/here]: cd from current dir including hidden
 ch() {
